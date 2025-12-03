@@ -10,6 +10,8 @@ const ipCar = ipRoot + '/cars'
 const ipSupplier = ipRoot + "/suppliers"
 const ipPart = ipRoot + "/parts"
 const ipProfile = ipRoot + "/profile"
+const ipBooking = ipRoot + "/bookings"
+
 
 export {
   ipRoot,
@@ -21,4 +23,5 @@ export {
   ipSupplier,
   ipPart,
   ipProfile,
+  ipBooking
 }
