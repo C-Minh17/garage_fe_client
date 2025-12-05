@@ -79,7 +79,7 @@ const ServicesPage = () => {
           <div className="text-center mb-5">
             <h1 className="fw-bold text-primary mb-2">Dịch Vụ Chuyên Nghiệp</h1>
             <p className="text-muted lead mx-auto" style={{ maxWidth: '600px' }}>
-              Giải pháp chăm sóc toàn diện cho xế yêu của bạn với công nghệ hiện đại và đội ngũ kỹ thuật viên lành nghề
+              Chúng tôi cung cấp đầy đủ các dịch vụ sửa chữa, bảo dưỡng ô tô với đội ngũ kỹ thuật viên chuyên nghiệp
             </p>
           </div>
 
