@@ -72,7 +72,7 @@ const HomePage = () => {
       <section className="py-5 bg-white">
         <Container>
           <div className="text-center mb-5">
-            <h2 className="fw-bold text-dark">Tại sao chọn AutoCare?</h2>
+            <h2 className="fw-bold text-dark">Tại sao chọn AutoPro?</h2>
             <p className="text-muted">Cam kết chất lượng dịch vụ hàng đầu</p>
           </div>
           

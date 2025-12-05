@@ -77,7 +77,7 @@ const ServicesPage = () => {
       <section className="bg-white py-5 border-bottom">
         <Container>
           <div className="text-center mb-5">
-            <h1 className="fw-bold display-5 text-primary mb-3">Dịch Vụ Chuyên Nghiệp</h1>
+            <h1 className="fw-bold text-primary mb-2">Dịch Vụ Chuyên Nghiệp</h1>
             <p className="text-muted lead mx-auto" style={{ maxWidth: '600px' }}>
               Giải pháp chăm sóc toàn diện cho xế yêu của bạn với công nghệ hiện đại và đội ngũ kỹ thuật viên lành nghề
             </p>
@@ -86,7 +86,7 @@ const ServicesPage = () => {
           <Card className="border-0 shadow-sm p-2 rounded-pill mx-auto" style={{ maxWidth: '700px' }}>
             <InputGroup>
               <InputGroup.Text className="bg-white border-0 ps-4">
-                <SearchOutlined className="text-primary fs-5" />
+                <SearchOutlined className="text-dark" />
               </InputGroup.Text>
               <Form.Control 
                 placeholder="Tìm kiếm dịch vụ (Ví dụ: Thay dầu, Lốp xe...)" 
@@ -111,7 +111,7 @@ const ServicesPage = () => {
         <Container>
           {loading ? (
             <div className="text-center py-5">
-              <Spinner animation="border" variant="primary" style={{ width: '3rem', height: '3rem' }} />
+              <Spinner animation="border" variant="primary"/>
             </div>
           ) : displayedServices.length > 0 ? (
             <>
