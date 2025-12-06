@@ -1,5 +1,7 @@
 import App from "../App"
 import Error404 from "../components/Error404"
+import Login from "../pages/Auth/login"
+import Register from "../pages/Auth/register"
 import BookCalendar from "../pages/Dat-lich"
 import Services from "../pages/Dich-vu"
 import Parts from "../pages/Phu-tung"
@@ -24,17 +26,17 @@ export const elementRoute = [
       {
         path: "bookcalendar",
         element: <BookCalendar />
-      }
+      },
     ]
   },
-  // {
-  //   path: "/login",
-  //   element: <Login />
-  // },
-  // {
-  //   path: "/Register",
-  //   element: <Register />
-  // },
+  {
+    path: "login",
+    element: <Login />
+  },
+  {
+    path: "/Register",
+    element: <Register />
+  },
   {
     path: "*",
     element: <Error404 />
