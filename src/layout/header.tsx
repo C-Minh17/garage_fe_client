@@ -1,15 +1,17 @@
 import { OpenAIOutlined } from '@ant-design/icons';
 import { ColorStyle } from '../styles/colors';
 import Button from '../components/Button';
-import { Link, useLocation } from 'react-router';
-import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { useBreakpoint } from '../hooks/useBreakpoint';
 
 const Header = () => {
   const location = useLocation();
   const [hovered, setHovered] = useState("");
+  const [isScrolled, setIsScrolled] = useState(false);
   const screen = useBreakpoint()
   const isMobile = screen.sm
+  
   const styleLinkHover = {
     color: ColorStyle.SidebarAccent,
     fontWeight: 600,
@@ -33,18 +35,36 @@ const Header = () => {
     fontSize: "14px",
     transition: ColorStyle.TransitionSmooth,
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const backgroundScrolled = 'linear-gradient(135deg, hsl(221 83% 35% / 0.5), hsl(189 94% 43% / 0.5))';
+
   return (
     <>
       <div style={{
         height: 65,
-        backgroundColor: "#ddd",
         padding: "0 50px",
-
-        background: ColorStyle.GradientPrimary,
         position: "fixed",
         top: 0,
         left: 0,
-        right: 0
+        right: 0,
+        zIndex: 1000,
+        background: isScrolled ? backgroundScrolled : ColorStyle.GradientPrimary,
+        backdropFilter: isScrolled ? "blur(10px)" : "none",
+        boxShadow: isScrolled ? "0 4px 30px rgba(0, 0, 0, 0.1)" : "none",
+        transition: "all 0.3s ease",
       }}>
         <div style={{
           display: "flex",
