@@ -1,7 +1,8 @@
 import React, { useState } from "react"
+import { ColorStyle } from "../../styles/colors"
 
 interface IButtonProps {
-  type?: "primary" | "default" | "dashed" | "text" | "link" | "error",
+  type?: "primary" | "default" | "dashed" | "text" | "link" | "gradientPrimary" | "error" | "viewDetail" | "success" | "orangeStyle",
   children: React.ReactNode,
   onClick?: () => void,
   disabled?: boolean,
@@ -56,12 +57,40 @@ const Button = ({
       color: "#1677ff",
       border: "none",
     },
+    gradientPrimary: {
+      bg: ColorStyle.GradientPrimary,
+      hover: "linear-gradient(135deg, hsl(221 83% 40%), hsl(189 94% 50%))",
+      active: "linear-gradient(135deg, hsl(221 83% 30%), hsl(189 94% 38%))",
+      color: "#fff",
+      border: "none",
+    },
     error: {
       bg: "#ff4d4f",
       hover: "#ff7875",
       active: "#d9363e",
       color: "#fff",
       border: "none",
+    },
+    viewDetail: {
+      bg: "#f5f8ff",
+      hover: "#dce7ff",
+      active: "#b7ccff",
+      color: "#3b6ff5",
+      border: "1px solid #d0ddff",
+    },
+    success: {
+      bg: "#52c41a",
+      hover: "#73d13d",
+      active: "#389e0d",
+      color: "#fff",
+      border: "none",
+    },
+    orangeStyle: {
+      bg: "hsl(25 95% 53%)",
+      hover: "hsl(25 95% 48%)",
+      active: "hsl(25 95% 43%)",
+      color: "#fff",
+      border: "1px solid hsl(25 95% 53%)",
     },
   }[type]
 

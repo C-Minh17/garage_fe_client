@@ -1,9 +1,11 @@
 import { OpenAIOutlined } from '@ant-design/icons';
 import { ColorStyle } from '../styles/colors';
 import Button from '../components/Button';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useBreakpoint } from '../hooks/useBreakpoint';
+import { deleteCookie, getCookie } from '../utils/cookie';
+import { notify } from '../components/Notification';
 
 const Header = () => {
   const location = useLocation();
@@ -11,7 +13,10 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const screen = useBreakpoint()
   const isMobile = screen.sm
-  
+  const token = getCookie("refreshToken")
+
+  const navigate = useNavigate()
+
   const styleLinkHover = {
     color: ColorStyle.SidebarAccent,
     fontWeight: 600,
@@ -21,6 +26,13 @@ const Header = () => {
     color: ColorStyle.SidebarAccent,
     fontWeight: 600,
   };
+
+  const logout = () => {
+    deleteCookie("accessToken")
+    deleteCookie("refreshToken")
+    notify({ title: "Success", type: "success", description: "Đăng xuất thành công" })
+    navigate("/login")
+  }
 
   const styleLink = {
     display: "flex",
@@ -110,7 +122,7 @@ const Header = () => {
             ))}
           </div>
           <div>
-            <Button>Đăng xuất</Button>
+            {token ? <Button onClick={logout}>Đăng Xuất</Button> : <Button onClick={() => navigate("/login")}>Đăng Nhập</Button>}
           </div>
         </div>
       </div>

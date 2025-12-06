@@ -6,17 +6,17 @@ import { ColorStyle } from './styles/colors';
 
 const MainLayout = () => {
   return (
-    <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
       minHeight: '100vh',
-      backgroundColor: ColorStyle.BgLayout 
+      backgroundColor: ColorStyle.BgLayout
     }}>
       <Header />
-      
-      <div style={{ 
-        flex: 1, 
-        display: 'flex', 
+
+      <div style={{
+        flex: 1,
+        display: 'flex',
         flexDirection: 'column',
         position: 'relative',
         zIndex: 1
