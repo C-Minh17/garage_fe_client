@@ -2,14 +2,6 @@ import axios from "../../utils/axios"
 import { ipBooking } from "../../utils/ip"
 
 
-interface ApiResponse<T = any> {
-  success?: boolean;
-  message?: string;
-  status?: number;
-  data?: T;
-}
-
-
 const createBooking = async (data: MBooking.IRequest): Promise<ApiResponse<MBooking.IResponse>> => {
   const res = await axios.post(`${ipBooking}/bookings`, data);
   return res as ApiResponse<MBooking.IResponse>;

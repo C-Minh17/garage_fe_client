@@ -4,6 +4,9 @@ import { SearchOutlined, ShoppingCartOutlined, CheckCircleOutlined, SafetyCertif
 import { getPart, searchParts } from '../../services/api/partApi';
 import { notify } from '../../components/Notification';
 import OrderPartModal from './components/form';
+import CartSidebar from './components/cartsidebar';
+import FloatingCart from './components/floatingcart';
+import { getCookie } from '../../utils/cookie';
 
 const PartsPage = () => {
   const [parts, setParts] = useState<MPart.IRecord[]>([]);
@@ -11,6 +14,7 @@ const PartsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   
   const [showModal, setShowModal] = useState(false);
+  const [showCart, setShowCart] = useState(false);
   const [selectedPart, setSelectedPart] = useState<MPart.IRecord | null>(null);
 
   const fetchData = async (keyword: string = '') => {
@@ -31,12 +35,6 @@ const PartsPage = () => {
       }
     } catch (error) {
       setParts([]);
-      notify({
-        title: "Lỗi tải dữ liệu",
-        type: "error",
-        description: "Không thể lấy danh sách phụ tùng. Vui lòng kiểm tra kết nối!",
-        duration: 4000
-      });
     } finally {
       setLoading(false);
     }
@@ -57,6 +55,16 @@ const PartsPage = () => {
   };
 
   const handleOpenOrder = (part: MPart.IRecord) => {
+    if (!getCookie('accessToken')) {
+        notify({
+            title: "Yêu cầu đăng nhập",
+            type: "warning",
+            description: "Vui lòng đăng nhập để thực hiện đặt hàng!",
+            duration: 3000
+        });
+        return;
+    }
+
     if (part.stock <= 0) {
       notify({
         title: "Hết hàng",
@@ -75,7 +83,7 @@ const PartsPage = () => {
   };
 
   return (
-    <div className="min-vh-100 bg-light font-sans">
+    <div className="min-vh-100 bg-light font-sans position-relative">
       <section className="bg-white py-5 text-center shadow-sm border-bottom">
         <Container>
           <h1 className="fw-bold text-primary mb-2">Phụ tùng ô tô chính hãng</h1>
@@ -133,6 +141,10 @@ const PartsPage = () => {
                       <h6 className="fw-bold text-dark mb-1 text-truncate" title={part.name}>{part.name}</h6>
                       <small className="text-muted d-block mb-3">{part.partCode}</small>
 
+                      <p className="text-muted small mb-3 flex-grow-1 line-clamp-2">
+                        Số lượng: {part.stock}
+                      </p>
+ 
                       <p className="text-muted small mb-3 flex-grow-1 line-clamp-2">
                         {part.description || "Sản phẩm chính hãng chất lượng cao."}
                       </p>
@@ -200,9 +212,16 @@ const PartsPage = () => {
 
       <OrderPartModal 
         show={showModal}
-        handleClose={handleCloseModal}
-        part={selectedPart}
+        handleClose={handleCloseModal} 
+        part={selectedPart} 
       />
+
+      <CartSidebar 
+        show={showCart}
+        handleClose={() => setShowCart(false)}
+      />
+
+      <FloatingCart onClick={() => setShowCart(true)} />
     </div>
   );
 };

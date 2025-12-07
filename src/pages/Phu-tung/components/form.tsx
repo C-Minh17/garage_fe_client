@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Button, Row, Col, Form as BootstrapForm } from 'react-bootstrap';
 import { notify } from '../../../components/Notification';
 import Form from '../../../components/FormBase';
+import { createBooking } from '../../../services/api/partbookingApi';
+import { M } from 'react-router/dist/development/instrumentation-Unc20tLk';
 
 interface OrderPartModalProps {
   show: boolean;
@@ -17,151 +19,90 @@ interface IOrderFormValues {
   note: string;
 }
 
-const validateOrderForm = (values: IOrderFormValues) => {
-  if (!values.customerName) {
-    notify({
-      title: "Thiếu họ tên",
-      type: "warning",
-      description: "Vui lòng nhập Họ tên khách hàng!",
-      duration: 3000
-    });
-    return false;
-  }
-
-  if (!values.phoneNumber) {
-    notify({
-      title: "Thiếu số điện thoại",
-      type: "warning",
-      description: "Vui lòng nhập Số điện thoại khách hàng!",
-      duration: 3000
-    });
-    return false;
-  }
-
-  if (!values.address) {
-    notify({
-      title: "Thiếu địa chỉ",
-      type: "warning",
-      description: "Vui lòng nhập Địa chỉ giao hàng!",
-      duration: 3000
-    });
-    return false;
-  }
-
-  return true;
-};
-
 const OrderPart: React.FC<OrderPartModalProps> = ({ show, handleClose, part }) => {
-  const initialValues: IOrderFormValues = {
-    customerName: '',
-    phoneNumber: '',
-    address: '',
-    quantity: 1,
-    note: ''
-  };
+  const [initialValues, setInitialValues] = useState<IOrderFormValues>({
+    customerName: '', phoneNumber: '', address: '', quantity: 1, note: ''
+  });
+
+  useEffect(() => {
+    if (show) {
+      const savedInfo = localStorage.getItem('user_info_cache');
+      if (savedInfo) {
+        setInitialValues({ ...JSON.parse(savedInfo), quantity: 1, note: '' });
+      }
+    }
+  }, [show]);
 
   const handleSubmit = async (values: IOrderFormValues) => {
-    if (!validateOrderForm(values)) return;
+    if (!values.customerName || !values.phoneNumber || !values.address) {
+      notify({ title: "Thiếu thông tin", type: "warning", description: "Vui lòng nhập đủ thông tin!" });
+      return;
+    }
 
     try {
-      console.log("Submitting order:", { ...values, partId: part?.id });
+      const payload: MPartBooking.IRequest = {
+        partId: part?.id || '',
+        supplierId: part?.supplierId || 'DEFAULT',
+        supplierCode: 'DEFAULT',
+        quantity: Number(values.quantity),
+        note: values.note,
+        customerName: values.customerName,
+        phone: values.phoneNumber,
+        address: values.address,
+        isActive: false,
+      };
 
-      notify({
-        title: "Đặt hàng thành công",
-        type: "success",
-        description: `Đã gửi yêu cầu đặt mua ${part?.name}`,
-        duration: 3000
-      });
+      const res: any = await createBooking(payload);
 
+      if (res && res.data) {
+        const bookingData = res.data.data || res.data; 
+        
+        if (bookingData && bookingData.id) {
+            const savedIds = JSON.parse(localStorage.getItem('tracking_orders') || '[]');
+            savedIds.push(bookingData.id);
+            localStorage.setItem('tracking_orders', JSON.stringify(savedIds));
+            
+            localStorage.setItem('user_info_cache', JSON.stringify({
+                customerName: values.customerName,
+                phoneNumber: values.phoneNumber,
+                address: values.address
+            }));
+
+            window.dispatchEvent(new Event('cart-updated'));
+        }
+      }
+
+      notify({ title: "Thành công", type: "success", description: "Đã gửi yêu cầu đặt hàng!" });
       handleClose();
-    } catch {
-      notify({
-        title: "Lỗi hệ thống",
-        type: "error",
-        description: "Không thể gửi đơn hàng, vui lòng thử lại sau.",
-        duration: 3000
-      });
+    } catch (error: any) {
+      notify({ title: "Thất bại", type: "error", description: error?.response?.data?.message || "Lỗi hệ thống" });
     }
   };
 
   return (
     <Modal show={show} onHide={handleClose} centered size="lg">
-      <Form<IOrderFormValues>
-        initialValues={initialValues}
-        onFinish={handleSubmit}
-      >
+      <Form<IOrderFormValues> initialValues={initialValues} onFinish={handleSubmit}>
         <Modal.Header closeButton className="border-0 pb-0">
           <Modal.Title className="fw-bold fs-5">Đặt mua phụ tùng</Modal.Title>
         </Modal.Header>
-
         <Modal.Body>
           {part && (
             <div className="bg-light p-3 rounded mb-4 d-flex justify-content-between align-items-center">
-              <div>
-                <h6 className="fw-bold mb-1">{part.name}</h6>
-                <small className="text-muted">{part.partCode} - {part.supplier?.name}</small>
-              </div>
-              <div className="text-end">
-                <div className="fw-bold text-primary fs-5">
-                  {Number(part.price).toLocaleString('vi-VN')}đ
-                </div>
-                <small className={part.stock > 0 ? "text-success" : "text-danger"}>
-                  {part.stock > 0 ? "Còn hàng" : "Hết hàng"}
-                </small>
-              </div>
+              <div><h6 className="fw-bold mb-1">{part.name}</h6><small className="text-muted">{part.partCode}</small></div>
+              <div className="text-end"><div className="fw-bold text-primary fs-5">{Number(part.price).toLocaleString('vi-VN')}đ</div></div>
             </div>
           )}
-
           <Row>
-            <Col md={6}>
-              <BootstrapForm.Group className="mb-3">
-                <BootstrapForm.Label className="fw-bold small">
-                  Họ và tên <span className="text-danger">*</span>
-                </BootstrapForm.Label>
-                <Form.Input name="customerName" placeholder="Nguyễn Văn A" />
-              </BootstrapForm.Group>
-            </Col>
-
-            <Col md={6}>
-              <BootstrapForm.Group className="mb-3">
-                <BootstrapForm.Label className="fw-bold small">
-                  Số điện thoại <span className="text-danger">*</span>
-                </BootstrapForm.Label>
-                <Form.Input name="phoneNumber" placeholder="0912 345 678" />
-              </BootstrapForm.Group>
-            </Col>
+            <Col md={6}><BootstrapForm.Group className="mb-3"><BootstrapForm.Label className="small fw-bold">Họ tên *</BootstrapForm.Label><Form.Input name="customerName" /></BootstrapForm.Group></Col>
+            <Col md={6}><BootstrapForm.Group className="mb-3"><BootstrapForm.Label className="small fw-bold">Số điện thoại *</BootstrapForm.Label><Form.Input name="phoneNumber" /></BootstrapForm.Group></Col>
           </Row>
-
-          <BootstrapForm.Group className="mb-3">
-            <BootstrapForm.Label className="fw-bold small">Số lượng</BootstrapForm.Label>
-            <Form.Input
-              name="quantity"
-              type="number"
-              min={1}
-              max={part?.stock}
-            />
-          </BootstrapForm.Group>
-
-          <BootstrapForm.Group className="mb-3">
-            <BootstrapForm.Label className="fw-bold small">
-              Địa chỉ giao hàng <span className="text-danger">*</span>
-            </BootstrapForm.Label>
-            <Form.Input name="address" placeholder="Số nhà, đường, phường/xã..." />
-          </BootstrapForm.Group>
-
-          <BootstrapForm.Group className="mb-3">
-            <BootstrapForm.Label className="fw-bold small">Ghi chú</BootstrapForm.Label>
-            <Form.Input name="note" placeholder="Ghi chú thêm về đơn hàng..." />
-          </BootstrapForm.Group>
+          <BootstrapForm.Group className="mb-3"><BootstrapForm.Label className="small fw-bold">Số lượng</BootstrapForm.Label><Form.Input name="quantity" type="number" min={1} /></BootstrapForm.Group>
+          <BootstrapForm.Group className="mb-3"><BootstrapForm.Label className="small fw-bold">Địa chỉ *</BootstrapForm.Label><Form.Input name="address" /></BootstrapForm.Group>
+          <BootstrapForm.Group className="mb-3"><BootstrapForm.Label className="small fw-bold">Ghi chú</BootstrapForm.Label><Form.Input name="note" /></BootstrapForm.Group>
         </Modal.Body>
-
         <Modal.Footer className="border-0 pt-0">
-          <Button variant="outline-secondary" onClick={handleClose} className="px-4 rounded-pill">
-            Hủy bỏ
-          </Button>
-          <Button variant="primary" type="submit" className="px-4 fw-bold rounded-pill">
-            Xác nhận đặt hàng
-          </Button>
+          <Button variant="outline-secondary" onClick={handleClose} className="rounded-pill px-4">Hủy</Button>
+          <Button variant="primary" type="submit" className="rounded-pill px-4 fw-bold">Xác nhận</Button>
         </Modal.Footer>
       </Form>
     </Modal>
