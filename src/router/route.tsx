@@ -1,3 +1,4 @@
+import MainLayout from "../App"
 import App from "../App"
 import Error404 from "../components/Error404"
 import Login from "../pages/Auth/login"
@@ -9,7 +10,7 @@ import Home from "../pages/Trang-chu"
 export const elementRoute = [
   {
     path: "/",
-    element: <App />,
+    element: <MainLayout />,
     children: [
       {
         index: true,

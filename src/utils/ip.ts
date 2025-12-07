@@ -12,7 +12,8 @@ const ipPart = ipRoot + "/parts"
 const ipProfile = ipRoot + "/profile"
 const ipBooking = ipRoot + "/bookings"
 const ipPartBooking = ipRoot + "/part-bookings"
-
+const ipRepairSchedule = ipRoot + "/bookings"
+const ipNotify = ipRoot + "/notifications"
 
 
 export {
@@ -26,5 +27,7 @@ export {
   ipPart,
   ipProfile,
   ipBooking,
-  ipPartBooking
+  ipPartBooking,
+  ipRepairSchedule,
+  ipNotify
 }
