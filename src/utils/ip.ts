@@ -11,6 +11,8 @@ const ipSupplier = ipRoot + "/suppliers"
 const ipPart = ipRoot + "/parts"
 const ipProfile = ipRoot + "/profile"
 const ipBooking = ipRoot + "/bookings"
+const ipPartBooking = ipRoot + "/part-bookings"
+
 
 
 export {
@@ -23,5 +25,6 @@ export {
   ipSupplier,
   ipPart,
   ipProfile,
-  ipBooking
+  ipBooking,
+  ipPartBooking
 }

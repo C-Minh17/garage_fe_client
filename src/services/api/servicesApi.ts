@@ -1,12 +1,6 @@
 import axios from "../../utils/axios"
 import { ipService } from "../../utils/ip"
 
-interface ApiResponse<T = any> {
-  success?: boolean
-  message?: string
-  status?: number
-  data?: T
-}
 
 const getServices = async (): Promise<ApiResponse<MService.IRecord[]>> => {
   const res = await axios.get(ipService)
