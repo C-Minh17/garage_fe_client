@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import "./index.scss"
 
-const FormContext = createContext<any>(null);
+export const FormContext = createContext<any>(null);
 
 export interface IFormProps<T> {
   initialValues?: T;
