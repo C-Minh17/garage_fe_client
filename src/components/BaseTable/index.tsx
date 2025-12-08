@@ -3,6 +3,7 @@ import "./table.scss"
 import Button from "../Button"
 import { FourSquare } from "react-loading-indicators"
 import { ColorStyle } from "../../styles/colors"
+import { LeftOutlined, RightOutlined } from "@ant-design/icons"
 
 export type Column<T = any> = {
   title: string,
@@ -134,7 +135,7 @@ const TableBase = <T,>({
           }}
           onClick={backPage}
         >
-          {/* <AiOutlineLeft /> */}m
+          <LeftOutlined />
         </Button>
         <div style={{
           display: "flex",
@@ -173,7 +174,7 @@ const TableBase = <T,>({
           }}
           onClick={nextPage}
         >
-          {/* <AiOutlineRight /> */}m
+          <RightOutlined />
         </Button>
       </div>
     </div>

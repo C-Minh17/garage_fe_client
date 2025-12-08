@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { FormContext } from "../FormBase";
 import "./Select.scss";
+import { DownOutlined, UpOutlined } from "@ant-design/icons";
 
 export interface Option {
   value: string;
@@ -93,7 +94,7 @@ const Select = ({ name, options, multiple = false, placeholder = "Select...", on
         ) : (
           <span className="placeholder"></span>
         )}
-        {/* <span className="arrow">{open ? <AiOutlineUp /> : <AiOutlineDown />}</span> */}
+        <span className="arrow">{open ? <UpOutlined /> : <DownOutlined />}</span>
       </div>
 
       {open && (

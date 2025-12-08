@@ -10,10 +10,34 @@ interface ApiResponse<T = any> {
 
 const getNotifications = async () => {
   const res = await axios.get(ipNotify)
-  return res as ApiResponse<MNotification.IRecord[]>
+  return res
+}
+
+const getNotificationsPending = async () => {
+  const res = await axios.get(`${ipNotify}/pending`)
+  return res
+}
+
+const getNotificationsConfirmed = async () => {
+  const res = await axios.get(`${ipNotify}/confirmed`)
+  return res
+}
+
+const getNotificationsCancelled = async () => {
+  const res = await axios.get(`${ipNotify}/cancelled`)
+  return res
+}
+
+const putNotificationsRead = async (id: string) => {
+  const res = await axios.put(`${ipNotify}/${id}/read`)
+  return res
 }
 
 
 export {
-  getNotifications
+  getNotifications,
+  getNotificationsCancelled,
+  getNotificationsConfirmed,
+  getNotificationsPending,
+  putNotificationsRead
 }

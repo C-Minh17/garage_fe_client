@@ -3,12 +3,11 @@ declare module MNotification {
     id: string;
     title: string;
     message: string;
-    bookingId: string;
-    senderId: string;
-    receiverId: string;
+    booking: MRepairSchedule.IRecord,
     type: string;
-    status: string;
+    status: string | "NEW" | "CONFIRMED" | "CANCELLED";
     read: boolean;
     createdAt: string;
+    services: MService.IRecord[]
   }
 }
