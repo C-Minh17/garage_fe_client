@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { useBreakpoint } from '../hooks/useBreakpoint';
 import { deleteCookie, getCookie } from '../utils/cookie';
 import { notify } from '../components/Notification';
+import NotificationSchedule from '../pages/notifications';
 
 const Header = () => {
   const location = useLocation();
@@ -121,8 +122,15 @@ const Header = () => {
               </Link>
             ))}
           </div>
-          <div>
-            {token ? <Button onClick={logout}>Đăng Xuất</Button> : <Button onClick={() => navigate("/login")}>Đăng Nhập</Button>}
+          <div style={{
+            display: "flex"
+          }}>
+            <div>
+              <NotificationSchedule />
+            </div>
+            <div>
+              {token ? <Button onClick={logout}>Đăng Xuất</Button> : <Button onClick={() => navigate("/login")}>Đăng Nhập</Button>}
+            </div>
           </div>
         </div>
       </div>

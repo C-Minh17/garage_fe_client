@@ -1,14 +1,30 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
-import Form from '../../components/FormBase';
+import Form, { FormContext } from '../../components/FormBase';
 import Button from '../../components/Button';
 import SelectServices from '../Dich-vu/components/selectService';
+import { postRepairSchedule } from '../../services/api/repairSchedule';
+import { notify } from '../../components/Notification';
+import { useReloadStore } from '../../stores/useReloadStore';
 
 
 const BookingForm = () => {
+  // const { value, setFieldValue, resetForm } = useContext(FormContext)
+  const [isReload, setIsReload] = useState<boolean>(false);
+  const [formKey, setFormKey] = useState(Date.now());
+  const reload = useReloadStore((state) => state.reload);
 
-  const onSubmit = (values: any) => {
+  const onSubmit = async (values: MRepairSchedule.IRecord) => {
     console.log("Submit values:", values);
+    const res = await postRepairSchedule(values)
+    if (res.success) {
+      notify({ title: "Success", type: "success", description: "Đã thêm nhà cung cấp mới" })
+      setIsReload?.(!isReload)
+      setFormKey(Date.now())
+      reload()
+    } else {
+      notify({ title: "Error", type: "error", description: res.message })
+    }
   };
 
   return (
@@ -23,21 +39,21 @@ const BookingForm = () => {
       <h4 style={{ fontWeight: 600, marginBottom: 5 }}>Thông tin khách hàng và xe</h4>
       <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 20 }}>Xác nhận thông tin của bạn</p>
 
-      <Form onFinish={onSubmit}>
+      <Form key={formKey} onFinish={onSubmit}>
         <Row className="gy-2 gx-2">
           <Col xs={12} sm={6}>
             <label className="form-label required" style={{ margin: 5 }}>Họ và tên</label>
-            <Form.Input name="fullName" placeholder="Nhập họ tên" />
+            <Form.Input name="customerName" placeholder="Nhập họ tên" />
           </Col>
 
           <Col xs={12} sm={6}>
             <label className="form-label required" style={{ margin: 5 }}>Số điện thoại</label>
-            <Form.Input name="phone" placeholder="Nhập số điện thoại" />
+            <Form.Input name="customerPhone" placeholder="Nhập số điện thoại" />
           </Col>
 
           <Col xs={12} sm={12}>
             <label className="form-label" style={{ margin: 5 }}>Email</label>
-            <Form.Input name="email" placeholder="Nhập email" />
+            <Form.Input name="customerEmail" placeholder="Nhập email" />
           </Col>
 
           <Col xs={12} style={{ marginTop: 15 }}>
@@ -47,12 +63,12 @@ const BookingForm = () => {
           </Col>
           <Col xs={12} sm={6}>
             <label className="form-label required" style={{ margin: 5 }}>Dịch vụ</label>
-            <SelectServices name='' />
+            <SelectServices name='serviceIds' multiple={true} />
           </Col>
 
           <Col xs={12} sm={6}>
             <label className="form-label required" style={{ margin: 5 }}>Chọn ngày</label>
-            <Form.Input type='date' name='' />
+            <Form.Input type='datetime-local' name='bookingTime' />
           </Col>
 
           <Col xs={12} style={{ marginTop: 15 }}>
@@ -92,53 +108,18 @@ const BookingForm = () => {
         </Row>
 
         <div style={{
-          backgroundColor: "#f9fafb",
-          padding: 16,
-          borderRadius: 8,
-          marginTop: 20,
-          border: '1px solid #f3f4f6'
-        }}>
-          <h5 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Tóm tắt đặt lịch</h5>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, marginBottom: 8, color: '#4b5563' }}>
-            <span>Ngày giờ</span>
-            <span>24/12/2025 - 14:00</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, marginBottom: 8, color: '#4b5563' }}>
-            <span>Dịch vụ</span>
-            <span>1 dịch vụ</span>
-          </div>
-          <div style={{
-            display: 'flex', justifyContent: 'space-between',
-            marginTop: 12, paddingTop: 12, borderTop: '1px solid #e5e7eb',
-            fontWeight: 600, color: '#111827'
-          }}>
-            <span>Tổng cộng</span>
-            <span style={{ color: '#2563eb', fontSize: 16 }}>100.000đ</span>
-          </div>
-        </div>
-
-        <div style={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "end",
           marginTop: 20
         }}>
           <Button
-            type="default"
-            onClick={() => console.log('Back')}
-            style={{ margin: "10px 0", background: '#fff', border: '1px solid #d9d9d9' }}
-          >
-            quay lai
-          </Button>
-
-          <Button
-            type="orangeStyle"
-            style={{ margin: "10px 0", backgroundColor: '#3b82f6', color: 'white', border: 'none' }}
+            type="gradientPrimary"
+            style={{ margin: "10px 0", color: 'white', border: 'none' }}
             htmlType="submit"
           >
-            dat lịch
+            Đặt lịch ngay
           </Button>
         </div>
-
       </Form>
     </div>
   );

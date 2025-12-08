@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import ReactDOM from "react-dom";
 import "./modal.scss";
+import { CloseOutlined } from "@ant-design/icons";
 
 interface ICustomModalProps {
   isOpen: boolean;
@@ -20,7 +22,7 @@ const BaseModal = ({ isOpen, closeModal, children }: ICustomModalProps) => {
 
   if (!isVisible) return null;
 
-  return (
+  return ReactDOM.createPortal(
     <div
       className={`modal-overlay ${isOpen ? "open" : "close"}`}
       onClick={closeModal}
@@ -30,11 +32,12 @@ const BaseModal = ({ isOpen, closeModal, children }: ICustomModalProps) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-close">
-          {/* <OutlineClose onClick={closeModal} /> */}
+          <CloseOutlined onClick={closeModal} />
         </div>
         <div className="modal-content">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
