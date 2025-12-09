@@ -69,6 +69,15 @@ const OrderPart: React.FC<OrderPartModalProps> = ({ show, handleClose, part }) =
         address: values.address,
         isActive: false,
       };
+      const phoneRegex = /^(0)\d{9}$/;     
+      if (!phoneRegex.test(values.phoneNumber.trim())) {
+        notify({ 
+          title: "Sai", 
+          type: "warning", 
+          description: "Số điện thoại không hợp lệ!" 
+        });
+        return;
+      }
 
       const res: any = await createBooking(payload);
 
