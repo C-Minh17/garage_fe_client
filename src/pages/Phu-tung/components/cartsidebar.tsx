@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { Offcanvas, Badge, Button, Spinner, Modal } from 'react-bootstrap';
 import { HistoryOutlined, ShoppingCartOutlined, DeleteOutlined, ExclamationCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { getBookingById, deleteBooking } from '../../../services/api/partbookingApi';
@@ -64,6 +64,14 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ show, handleClose }) => {
         const handleUpdate = () => { if (show) fetchOrders(); };
         window.addEventListener('cart-updated', handleUpdate);
         return () => window.removeEventListener('cart-updated', handleUpdate);
+    }, [show]);
+
+    useEffect(() => {
+        if (!show) return;
+        const interval = setInterval(() => {
+            fetchOrders();
+            }, 10000);
+        return () => clearInterval(interval);
     }, [show]);
 
     const onRequestDelete = (id: string) => {
