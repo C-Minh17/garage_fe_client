@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { Offcanvas, Badge, Button, Spinner, Modal } from 'react-bootstrap';
 import { HistoryOutlined, ShoppingCartOutlined, DeleteOutlined, ExclamationCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { getBookingById, deleteBooking } from '../../../services/api/partbookingApi';
@@ -9,7 +9,7 @@ interface CartSidebarProps {
     handleClose: () => void;
 }
 
-const CartSidebar: React.FC<CartSidebarProps> = ({ show, handleClose }) => {
+const CartSidebar = ({ show, handleClose }: CartSidebarProps) => {
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
@@ -41,7 +41,6 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ show, handleClose }) => {
             );
 
             const results = await Promise.all(promises);
-            
             const validOrders = results.filter(item => item && item.isValid);
             
             if (validOrders.length < savedIds.length) {
@@ -67,12 +66,19 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ show, handleClose }) => {
         return () => window.removeEventListener('cart-updated', handleUpdate);
     }, [show]);
 
+    useEffect(() => {
+        if (!show) return;
+        const interval = setInterval(() => {
+            fetchOrders();
+            }, 10000);
+        return () => clearInterval(interval);
+    }, [show]);
+
     const onRequestDelete = (id: string) => {
         setDeleteId(id);
         setShowConfirm(true);
     };
 
-    // --- LOGIC XÓA MỚI ---
     const handleConfirmDelete = async () => {
         if (!deleteId) return;
 
@@ -80,18 +86,13 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ show, handleClose }) => {
         
         setProcessing(true);
         try {
-            // Trường hợp 1: Đơn MỚI TẠO (PENDING) -> Gọi API xóa thật để hủy đơn
             if (!targetOrder.isActive && targetOrder.status !== 'CONFIRMED' && targetOrder.status !== 'CANCELLED') {
                 await deleteBooking(deleteId);
                 notify({ title: "Đã hủy", type: "success", description: "Đơn hàng đã được hủy thành công." });
-            } 
-            // Trường hợp 2: Đơn ĐÃ DUYỆT hoặc ĐÃ TỪ CHỐI -> Chỉ xóa khỏi LocalStorage (Client ẩn đi)
-            else {
+            } else {
                 notify({ title: "Đã ẩn", type: "success", description: "Đã xóa đơn hàng khỏi danh sách theo dõi." });
-                // KHÔNG GỌI API DELETE Ở ĐÂY -> Dữ liệu Server vẫn còn
             }
 
-            // Xóa khỏi LocalStorage (Áp dụng cho cả 2 trường hợp)
             const savedIds = JSON.parse(localStorage.getItem('tracking_orders') || '[]');
             const newIds = savedIds.filter((id: string) => id !== deleteId);
             localStorage.setItem('tracking_orders', JSON.stringify(newIds));
@@ -101,7 +102,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ show, handleClose }) => {
             setShowConfirm(false);
             setDeleteId(null);
 
-        } catch (error: any) {
+        } catch {
             notify({ title: "Lỗi", type: "error", description: "Không thể thực hiện hành động." });
         } finally {
             setProcessing(false);
@@ -116,52 +117,45 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ show, handleClose }) => {
             return <Badge bg="success" className="position-absolute top-0 end-0 m-2">Đã xác nhận</Badge>;
         }
         return <Badge bg="warning" text="dark" className="position-absolute top-0 end-0 m-2">Chờ xác nhận</Badge>;
-    }
+    };
 
     const renderActionBtn = (item: any) => {
-        // Nút cho đơn bị từ chối -> Xóa khỏi list (Soft delete client side)
         if (item.status === 'CANCELLED') {
             return (
                 <Button 
                     variant="outline-secondary" size="sm" className="border-0 text-danger"
                     onClick={() => onRequestDelete(item.id)}
-                    title="Xóa khỏi danh sách"
                 >
                     <span className="d-flex align-items-center gap-1"><DeleteOutlined /> Xóa đơn</span>
                 </Button>
             );
         }
-        // Nút cho đơn đã duyệt -> Xóa khỏi list
         if (item.isActive || item.status === 'CONFIRMED') {
             return (
                 <Button 
                     variant="light" size="sm" className="border-0 text-muted"
                     onClick={() => onRequestDelete(item.id)}
-                    title="Xóa khỏi danh sách"
                 >
                     <DeleteOutlined />
                 </Button>
             );
         }
-        // Nút cho đơn mới -> Hủy đơn (Delete thật)
         return (
             <Button 
                 variant="outline-danger" size="sm" className="border-0"
                 onClick={() => onRequestDelete(item.id)}
-                title="Hủy đơn hàng"
             >
                 <span className="d-flex align-items-center gap-1"><CloseCircleOutlined /> Hủy đơn</span>
             </Button>
         );
-    }
+    };
 
     const targetItem = orders.find(o => o.id === deleteId);
-    // Kiểm tra xem đơn này có phải loại "Chỉ xóa local" không
     const isLocalDeleteOnly = targetItem?.isActive || targetItem?.status === 'CONFIRMED' || targetItem?.status === 'CANCELLED';
 
     return (
         <>
-            <Offcanvas show={show} onHide={handleClose} placement="end" className="font-sans" style={{ width: '400px' }}>
+            <Offcanvas show={show} onHide={handleClose} placement="end" style={{ width: '400px' }}>
                 <Offcanvas.Header closeButton className="border-bottom">
                     <Offcanvas.Title className="fw-bold d-flex align-items-center gap-2">
                         <HistoryOutlined /> Đơn hàng đang theo dõi

@@ -116,12 +116,12 @@ const ServicesPage = () => {
           ) : displayedServices.length > 0 ? (
             <>
               <div className="d-flex justify-content-between align-items-center mb-4">
-                <h5 className="fw-bold text-dark m-0">
+                {/* <h5 className="fw-bold text-dark m-0">
                   Tìm thấy {servicesList.length} kết quả
-                </h5>
+                </h5> */}
                 <div className="d-flex gap-2">
-                  <Badge bg="primary" className="px-3 py-2 rounded-pill">Tất cả</Badge>
-                  <Badge bg="light" text="dark" className="px-3 py-2 rounded-pill border">Phổ biến</Badge>
+                  <Badge bg="primary" className="px-3 py-2 rounded-pill">Tất cả Dịch vụ</Badge>
+                  {/* <Badge bg="light" text="dark" className="px-3 py-2 rounded-pill border">Phổ biến</Badge> */}
                 </div>
               </div>
 
@@ -142,7 +142,7 @@ const ServicesPage = () => {
 
                         <div className="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
                           <div>
-                            <div className="text-muted small">Chi phí từ</div>
+                            <div className="text-muted small">Chi phí từ: </div>
                             <div className="fw-bold text-primary fs-5">
                               {service.price ? Number(service.price).toLocaleString('vi-VN') : 'Liên hệ'} đ
                             </div>
