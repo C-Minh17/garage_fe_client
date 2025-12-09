@@ -9,7 +9,7 @@ interface CartSidebarProps {
     handleClose: () => void;
 }
 
-const CartSidebar: React.FC<CartSidebarProps> = ({ show, handleClose }) => {
+const CartSidebar = ({ show, handleClose }: CartSidebarProps) => {
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);

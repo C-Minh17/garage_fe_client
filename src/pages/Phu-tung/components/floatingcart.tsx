@@ -7,7 +7,7 @@ interface FloatingCartProps {
   onClick: () => void;
 }
 
-const FloatingCart: React.FC<FloatingCartProps> = ({ onClick }) => {
+const FloatingCart = ({ onClick }: FloatingCartProps) => {
   const [count, setCount] = useState(0);
   const [animate, setAnimate] = useState(false);
 
