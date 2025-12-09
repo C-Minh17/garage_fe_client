@@ -3,7 +3,6 @@ import { Modal, Button, Row, Col, Form as BootstrapForm } from 'react-bootstrap'
 import { notify } from '../../../components/Notification';
 import Form from '../../../components/FormBase';
 import { createBooking } from '../../../services/api/partbookingApi';
-import { M } from 'react-router/dist/development/instrumentation-Unc20tLk';
 
 interface OrderPartModalProps {
   show: boolean;
@@ -21,7 +20,11 @@ interface IOrderFormValues {
 
 const OrderPart: React.FC<OrderPartModalProps> = ({ show, handleClose, part }) => {
   const [initialValues, setInitialValues] = useState<IOrderFormValues>({
-    customerName: '', phoneNumber: '', address: '', quantity: 1, note: ''
+    customerName: '',
+    phoneNumber: '',
+    address: '',
+    quantity: 1,
+    note: ''
   });
 
   useEffect(() => {
@@ -34,11 +37,18 @@ const OrderPart: React.FC<OrderPartModalProps> = ({ show, handleClose, part }) =
   }, [show]);
 
   const handleSubmit = async (values: IOrderFormValues) => {
-    if (!values.customerName || !values.phoneNumber || !values.address) {
-      notify({ title: "Thiếu thông tin", type: "warning", description: "Vui lòng nhập đủ thông tin!" });
+    if (!values.customerName?.trim()) {
+      notify({ title: "Thiếu thông tin", type: "warning", description: "Vui lòng nhập Họ tên khách hàng!" });
       return;
     }
-
+    if (!values.phoneNumber?.trim()) {
+      notify({ title: "Thiếu thông tin", type: "warning", description: "Vui lòng nhập Số điện thoại!" });
+      return;
+    }
+    if (!values.address?.trim()) {
+      notify({ title: "Thiếu thông tin", type: "warning", description: "Vui lòng nhập Địa chỉ nhận hàng!" });
+      return;
+    }
     try {
       const payload: MPartBooking.IRequest = {
         partId: part?.id || '',
@@ -55,20 +65,20 @@ const OrderPart: React.FC<OrderPartModalProps> = ({ show, handleClose, part }) =
       const res: any = await createBooking(payload);
 
       if (res && res.data) {
-        const bookingData = res.data.data || res.data; 
-        
-        if (bookingData && bookingData.id) {
-            const savedIds = JSON.parse(localStorage.getItem('tracking_orders') || '[]');
-            savedIds.push(bookingData.id);
-            localStorage.setItem('tracking_orders', JSON.stringify(savedIds));
-            
-            localStorage.setItem('user_info_cache', JSON.stringify({
-                customerName: values.customerName,
-                phoneNumber: values.phoneNumber,
-                address: values.address
-            }));
+        const bookingData = res.data.data || res.data;
 
-            window.dispatchEvent(new Event('cart-updated'));
+        if (bookingData && bookingData.id) {
+          const savedIds = JSON.parse(localStorage.getItem('tracking_orders') || '[]');
+          savedIds.push(bookingData.id);
+          localStorage.setItem('tracking_orders', JSON.stringify(savedIds));
+
+          localStorage.setItem('user_info_cache', JSON.stringify({
+            customerName: values.customerName,
+            phoneNumber: values.phoneNumber,
+            address: values.address
+          }));
+
+          window.dispatchEvent(new Event('cart-updated'));
         }
       }
 
@@ -85,24 +95,68 @@ const OrderPart: React.FC<OrderPartModalProps> = ({ show, handleClose, part }) =
         <Modal.Header closeButton className="border-0 pb-0">
           <Modal.Title className="fw-bold fs-5">Đặt mua phụ tùng</Modal.Title>
         </Modal.Header>
+
         <Modal.Body>
           {part && (
             <div className="bg-light p-3 rounded mb-4 d-flex justify-content-between align-items-center">
-              <div><h6 className="fw-bold mb-1">{part.name}</h6><small className="text-muted">{part.partCode}</small></div>
-              <div className="text-end"><div className="fw-bold text-primary fs-5">{Number(part.price).toLocaleString('vi-VN')}đ</div></div>
+              <div>
+                <h6 className="fw-bold mb-1">{part.name}</h6>
+                <small className="text-muted">{part.partCode}</small>
+              </div>
+              <div className="text-end">
+                <div className="fw-bold text-primary fs-5">
+                  {Number(part.price).toLocaleString('vi-VN')}đ
+                </div>
+              </div>
             </div>
           )}
+
           <Row>
-            <Col md={6}><BootstrapForm.Group className="mb-3"><BootstrapForm.Label className="small fw-bold">Họ tên *</BootstrapForm.Label><Form.Input name="customerName" /></BootstrapForm.Group></Col>
-            <Col md={6}><BootstrapForm.Group className="mb-3"><BootstrapForm.Label className="small fw-bold">Số điện thoại *</BootstrapForm.Label><Form.Input name="phoneNumber" /></BootstrapForm.Group></Col>
+            <Col md={6}>
+              <BootstrapForm.Group className="mb-3">
+                <BootstrapForm.Label className="small fw-bold">
+                  Họ tên <span className="text-danger">*</span>
+                </BootstrapForm.Label>
+                <Form.Input name="customerName" placeholder="Nhập họ tên của bạn" />
+              </BootstrapForm.Group>
+            </Col>
+            <Col md={6}>
+              <BootstrapForm.Group className="mb-3">
+                <BootstrapForm.Label className="small fw-bold">
+                  Số điện thoại <span className="text-danger">*</span>
+                </BootstrapForm.Label>
+                <Form.Input name="phoneNumber" placeholder="Nhập số điện thoại liên hệ" />
+              </BootstrapForm.Group>
+            </Col>
           </Row>
-          <BootstrapForm.Group className="mb-3"><BootstrapForm.Label className="small fw-bold">Số lượng</BootstrapForm.Label><Form.Input name="quantity" type="number" min={1} /></BootstrapForm.Group>
-          <BootstrapForm.Group className="mb-3"><BootstrapForm.Label className="small fw-bold">Địa chỉ *</BootstrapForm.Label><Form.Input name="address" /></BootstrapForm.Group>
-          <BootstrapForm.Group className="mb-3"><BootstrapForm.Label className="small fw-bold">Ghi chú</BootstrapForm.Label><Form.Input name="note" /></BootstrapForm.Group>
+
+          <BootstrapForm.Group className="mb-3">
+            <BootstrapForm.Label className="small fw-bold">
+              Số lượng <span className="text-danger">*</span>
+            </BootstrapForm.Label>
+            <Form.Input name="quantity" type="number" min={1} />
+          </BootstrapForm.Group>
+
+          <BootstrapForm.Group className="mb-3">
+            <BootstrapForm.Label className="small fw-bold">
+              Địa chỉ <span className="text-danger">*</span>
+            </BootstrapForm.Label>
+            <Form.Input name="address" placeholder="Số nhà, đường, phường/xã..." />
+          </BootstrapForm.Group>
+
+          <BootstrapForm.Group className="mb-3">
+            <BootstrapForm.Label className="small fw-bold">Ghi chú</BootstrapForm.Label>
+            <Form.Input name="note" placeholder="Yêu cầu thêm (nếu có)" />
+          </BootstrapForm.Group>
         </Modal.Body>
+
         <Modal.Footer className="border-0 pt-0">
-          <Button variant="outline-secondary" onClick={handleClose} className="rounded-pill px-4">Hủy</Button>
-          <Button variant="primary" type="submit" className="rounded-pill px-4 fw-bold">Xác nhận</Button>
+          <Button variant="outline-secondary" onClick={handleClose} className="rounded-pill px-4">
+            Hủy
+          </Button>
+          <Button variant="primary" type="submit" className="rounded-pill px-4 fw-bold">
+            Xác nhận
+          </Button>
         </Modal.Footer>
       </Form>
     </Modal>

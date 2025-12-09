@@ -14,6 +14,8 @@ declare namespace MPartBooking {
     address: string;
     customerName: string;
     isActive: boolean;
+    status: string;
+    updatedAt: string;
     createdAt: string;
   }
 
