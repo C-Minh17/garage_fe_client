@@ -1,15 +1,23 @@
 import { OpenAIOutlined } from '@ant-design/icons';
 import { ColorStyle } from '../styles/colors';
 import Button from '../components/Button';
-import { Link, useLocation } from 'react-router';
-import { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { useBreakpoint } from '../hooks/useBreakpoint';
+import { deleteCookie, getCookie } from '../utils/cookie';
+import { notify } from '../components/Notification';
+import NotificationSchedule from '../pages/notifications';
 
 const Header = () => {
   const location = useLocation();
   const [hovered, setHovered] = useState("");
+  const [isScrolled, setIsScrolled] = useState(false);
   const screen = useBreakpoint()
   const isMobile = screen.sm
+  const token = getCookie("refreshToken")
+
+  const navigate = useNavigate()
+
   const styleLinkHover = {
     color: ColorStyle.SidebarAccent,
     fontWeight: 600,
@@ -19,6 +27,13 @@ const Header = () => {
     color: ColorStyle.SidebarAccent,
     fontWeight: 600,
   };
+
+  const logout = () => {
+    deleteCookie("accessToken")
+    deleteCookie("refreshToken")
+    notify({ title: "Success", type: "success", description: "Đăng xuất thành công" })
+    navigate("/login")
+  }
 
   const styleLink = {
     display: "flex",
@@ -33,18 +48,36 @@ const Header = () => {
     fontSize: "14px",
     transition: ColorStyle.TransitionSmooth,
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const backgroundScrolled = 'linear-gradient(135deg, hsl(221 83% 35% / 0.5), hsl(189 94% 43% / 0.5))';
+
   return (
     <>
       <div style={{
         height: 65,
-        backgroundColor: "#ddd",
         padding: "0 50px",
-
-        background: ColorStyle.GradientPrimary,
         position: "fixed",
         top: 0,
         left: 0,
-        right: 0
+        right: 0,
+        zIndex: 1000,
+        background: isScrolled ? backgroundScrolled : ColorStyle.GradientPrimary,
+        backdropFilter: isScrolled ? "blur(10px)" : "none",
+        boxShadow: isScrolled ? "0 4px 30px rgba(0, 0, 0, 0.1)" : "none",
+        transition: "all 0.3s ease",
       }}>
         <div style={{
           display: "flex",
@@ -89,8 +122,15 @@ const Header = () => {
               </Link>
             ))}
           </div>
-          <div>
-            <Button>Đăng xuất</Button>
+          <div style={{
+            display: "flex"
+          }}>
+            <div>
+              <NotificationSchedule />
+            </div>
+            <div>
+              {token ? <Button onClick={logout}>Đăng Xuất</Button> : <Button onClick={() => navigate("/login")}>Đăng Nhập</Button>}
+            </div>
           </div>
         </div>
       </div>

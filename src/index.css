@@ -6,13 +6,133 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: hsl(0 0% 100%);
+  color: #333; 
 }
 
-*{
-  box-sizing: "border-box";
+* {
+  box-sizing: border-box;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.hero-section {
+  background: linear-gradient(120deg, #001529 0%, #003a8c 100%);
+  color: white;
+  padding: 80px 0;
+}
+
+.btn-orange {
+  background-color: #ff7b00;
+  border-color: #ff7b00;
+  color: white;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+.btn-orange:hover {
+  background-color: #e66e00;
+  border-color: #e66e00;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 123, 0, 0.3);
+}
+
+.btn-outline-light-custom {
+  border: 2px solid rgba(255,255,255,0.8);
+  color: white;
+  font-weight: 600;
+}
+
+.btn-outline-light-custom:hover {
+  background-color: rgba(255,255,255,0.1);
+  color: white;
+}
+
+.feature-box {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  text-align: center;
+  height: 100%;
+  border: 1px solid #eee;
+  transition: 0.3s;
+}
+
+.feature-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.icon-circle {
+  width: 60px;
+  height: 60px;
+  background-color: #e6f0ff;
+  color: #0052cc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 24px;
+}
+
+.service-card {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  transition: all 0.3s;
+  background: white;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  border-color: #1890ff;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 24px;
+  color: #0052cc !important;
+}
+
+.nav-link {
+  font-weight: 500;
+  color: #555 !important;
+  margin: 0 10px;
+}
+
+.nav-link:hover {
+  color: #0052cc !important;
+}
+
+footer {
+  background-color: white;
+  padding-top: 60px;
+  border-top: 1px solid #eee;
+}
+
+footer h5 {
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+footer ul li {
+  margin-bottom: 12px;
+}
+
+footer a {
+  text-decoration: none;
+  color: #666;
+  font-size: 14px;
+}
+
+footer a:hover {
+  color: #0052cc;
 }

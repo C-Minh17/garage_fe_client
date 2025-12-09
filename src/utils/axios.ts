@@ -44,10 +44,13 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   (response) => {
-    return {
-      ...response.data,
-      success: true,
+    if (response.data && typeof response.data === 'object' && !Array.isArray(response.data)) {
+      return {
+        ...response.data,
+        success: true,
+      };
     }
+    return response.data;
   },
 
   async (error) => {
