@@ -49,6 +49,14 @@ const OrderPart: React.FC<OrderPartModalProps> = ({ show, handleClose, part }) =
       notify({ title: "Thiếu thông tin", type: "warning", description: "Vui lòng nhập Địa chỉ nhận hàng!" });
       return;
     }
+    if (part && Number(values.quantity) > Number(part.stock)) {
+      notify({ 
+        title: "Số lượng không hợp lệ", 
+        type: "warning", 
+        description: `Số lượng đặt (${values.quantity}) vượt quá tồn kho hiện tại (${part.stock})!` 
+      });
+      return; 
+    }
     try {
       const payload: MPartBooking.IRequest = {
         partId: part?.id || '',
