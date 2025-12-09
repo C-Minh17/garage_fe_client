@@ -126,9 +126,9 @@ const HomePage = () => {
                           <h6 className="fw-bold text-dark mb-0 text-truncate" style={{maxWidth: '250px'}} title={service.name}>
                             {service.name}
                           </h6>
-                          {service.price && service.price > 1000000 && (
+                          {/* {service.price && service.price > 1000000 && (
                             <Badge bg="warning" text="dark" pill>Phổ biến</Badge>
-                          )}
+                          )} */}
                         </div>
                         <div className="text-muted small">
                          {service.price ? 'Từ ' + Number(service.price).toLocaleString('vi-VN') + ' đ' : 'Liên hệ'}
