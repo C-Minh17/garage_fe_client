@@ -18,7 +18,7 @@ const BookingForm = () => {
     console.log("Submit values:", values);
     const res = await postRepairSchedule(values)
     if (res.success) {
-      notify({ title: "Success", type: "success", description: "Đã thêm nhà cung cấp mới" })
+      notify({ title: "Success", type: "success", description: "Đặt lịch thành công!" })
       setIsReload?.(!isReload)
       setFormKey(Date.now())
       reload()
