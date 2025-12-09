@@ -146,9 +146,12 @@ const PartsPage = () => {
                       </p>
  
                       <p className="text-muted small mb-3 flex-grow-1 line-clamp-2">
-                        {part.description || "Sản phẩm chính hãng chất lượng cao."}
+                        {(part.description || "Sản phẩm chính hãng chất lượng cao.").length > 27
+                        ? (part.description || "Sản phẩm chính hãng chất lượng cao.").slice(0, 27) + "..."
+                        : (part.description || "Sản phẩm chính hãng chất lượng cao.")
+                        }
                       </p>
-
+                      
                       <div className="d-flex align-items-center gap-2 text-primary small mb-3">
                         <CheckCircleOutlined /> Bảo hành chính hãng
                       </div>
